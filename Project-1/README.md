@@ -1,4 +1,4 @@
-# Jenkins-Project-1: Deploy a Python Flask Todo App Using CI/CD Pipeline in Jenkins...
+# Jenkins-Project-1: Deploy a Python Flask Todo App Using CI/CD Pipeline in Jenkins
 
 ## Project Introduction:
 
