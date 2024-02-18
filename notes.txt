@@ -15,3 +15,5 @@ If you want CICD pipeline to auto-run on every commit to the repository,
 
 - create a new credentials in Jenkins and select username with private key. 
 - Add the aws EC2 instance private key and add username depending on your EC2 Instance.
+
+Use the created credentials in your script as environment variables.
