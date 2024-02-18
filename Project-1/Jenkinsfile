@@ -45,7 +45,7 @@ pipeline {
                     withCredentials([sshUserPrivateKey(credentialsId: 'my-app-server-ssh-id', keyFileVariable: 'awsPrivateKey', usernameVariable: 'awsUsername')]) {
                         sh """
                         ssh -o StrictHostKeyChecking=no -i \${awsPrivateKey} \${awsUsername}@65.0.122.78 \
-                        'ip addr && whoami && docker pull alexxy21/flask-todo-app && docker run -d -p 80:5000 alexxy21/flask-todo-app'
+                        'docker system prune -af && docker pull alexxy21/flask-todo-app && docker run -d -p 80:5000 alexxy21/flask-todo-app'
                         """
                     }
                 }
