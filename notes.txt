@@ -1,0 +1,17 @@
+**Note -Jenkins and Github Integration
+
+- Create a PAT (Personal Access Token) in github account and add it to Jenkins configuration in Github plugin
+- Create a secret text credential for Github. Use this credential in step above.
+- create a ssh key-pair and copy the public key to Github in settings :- SSH and GPG Keys 
+  (required to Jenkins can download and clone repos from Github account)
+- copy the private key and add it as credentials as SSH username with private key in Jenkins
+
+If you want CICD pipeline to auto-run on every commit to the repository, 
+- add a web-hook to your github repository
+- add payload url
+
+
+**Note -Jenkins and AWS EC2 Integration
+
+- create a new credentials in Jenkins and select username with private key. 
+- Add the aws EC2 instance private key and add username depending on your EC2 Instance.

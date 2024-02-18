@@ -16,12 +16,10 @@ Implementing CI/CD pipelines with Jenkins offers several benefits:
 
 ## Featured Projects
 
-### Project 1: Deploy a Python Flask Todo App Using CI/CD Pipeline in Jenkins
-- **Objective:** Automate testing of web applications using Selenium.
-- **Features:** 
-  - Set up Jenkins jobs to trigger Selenium tests automatically.
-  - Integrate test reports with Jenkins for better visibility.
-
+### [Project 1: Deploy a Python Flask Todo App Using CI/CD Pipeline in Jenkins](https://github.com/rajrules21/Jenkins-Projects/tree/d292757834953dffe96509893e6475aeae4cd480/Project-1/)
+- **Objective:** Develop a To-Do List Application
+- **Features:** Add and Delete Tasks
+ 
 
 
 Stay tuned for more exciting projects as we continue to leverage Jenkins for enhancing our software delivery capabilities!

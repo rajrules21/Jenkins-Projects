@@ -19,7 +19,7 @@ HTML/CSS: Frontend markup and styling.
 Jenkins: CI/CD automation server for orchestrating the pipeline.
 Docker: Containerization technology for packaging the application.
 AWS EC2: Virtual server instances for hosting the application.
-AWS ECS: Container orchestration service for deploying and managing Docker containers at scale.
+
 Creating the Jenkins CI/CD Pipeline:
 
 GitHub Repository Setup: Create a GitHub repository to host the project code, including the Flask application, Dockerfile, Jenkinsfile, and HTML templates.
@@ -38,12 +38,5 @@ EC2 Instance Setup: Launch an EC2 instance and configure it with Docker to run D
 
 Deploying the Application: Use SSH to connect to the EC2 instance from Jenkins and pull the Docker image. Run the Docker container to deploy the Flask application.
 
-Deployment to AWS ECS:
-
-Containerization: Containerize the Flask application using Docker and push the Docker image to Docker Hub (or another container registry).
-
-ECS Cluster Setup: Create an ECS cluster and configure it with a task definition and service for running the application.
-
-ECS Deployment: Use the AWS CLI or AWS SDK in Jenkins to deploy the Docker image to ECS. ECS will handle the scaling, load balancing, and management of the containers.
 
 By following these steps, we'll be able to create a robust CI/CD pipeline for our Flask application and deploy it seamlessly to both AWS EC2 and AWS ECS environments.
