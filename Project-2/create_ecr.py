@@ -16,7 +16,7 @@ def create_ecr_repository(repository_name):
         {
             'Key': 'image',
             'Value': 'flask-crud-app'
-        })
+        }])
         repository_arn = response['repository']['repositoryArn']
         print(f"ECR repository '{repository_name}' created successfully.")
         return repository_arn
