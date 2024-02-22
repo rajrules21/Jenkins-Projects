@@ -10,7 +10,7 @@ Welcome to our Flask CRUD Application Deployment project! In this project, we'll
   
 - **CI/CD Pipeline Setup:** Implement a Continuous Integration/Continuous Deployment (CI/CD) pipeline using Jenkins to automate the build, test, and deployment processes of the Flask application.
   
-- **Deployment to AWS:** Deploy the Flask application to AWS ECS (Elastic Container Service) using Docker containers.
+- **Deployment to AWS ECS:** Deploy the Flask application to AWS ECS (Elastic Container Service) using Docker containers.
 
 ## Tools and Technologies:
 
@@ -18,6 +18,7 @@ Welcome to our Flask CRUD Application Deployment project! In this project, we'll
 - **DynamoDB:** NoSQL database service from AWS for storing application data.
 - **Jenkins:** CI/CD automation server for orchestrating the pipeline.
 - **Docker:** Containerization technology for packaging the application.
+- **AWS ECR:** Container registry service for hosting and managing Docker images.
 - **AWS ECS:** Container orchestration service for deploying and managing Docker containers.
 
 ## Project Structure:
@@ -30,7 +31,7 @@ Welcome to our Flask CRUD Application Deployment project! In this project, we'll
 - **Jenkinsfile:** Jenkins pipeline script for automating CI/CD processes.
 - **requirements.txt:** File containing Python dependencies for the project.
 - **templates:** Directory containing HTML templates for the Flask application.
-- **__pycache__:** Directory containing cached Python bytecode.
+
 
 ## CI/CD Pipeline Steps:
 
