@@ -1,3 +1,4 @@
+import sys
 import boto3
 
 # Initialize ECS client
@@ -42,16 +43,16 @@ def create_ecs_service(cluster_name, service_name, task_definition_arn, desired_
     )
     print("ECS Service created:", response['service']['serviceName'])
 
-# Example usage
-if __name__ == "__main__":
-    # Replace these values with your specific configuration
-    cluster_name = 'my-cluster'
-    task_family = 'my-task-family'
-    container_image = 'your-docker-image-url'
-    cpu = '256'  # CPU units
-    memory = '512'  # Memory in MB
-    service_name = 'my-service'
-    desired_count = 1
+# Main function
+def main():
+    # Extract command-line arguments
+    cluster_name = sys.argv[1]
+    task_family = sys.argv[2]
+    container_image = sys.argv[3]
+    cpu = sys.argv[4]
+    memory = sys.argv[5]
+    service_name = sys.argv[6]
+    desired_count = int(sys.argv[7])
 
     # 1. Create an ECS Cluster
     create_ecs_cluster(cluster_name)
@@ -65,3 +66,6 @@ if __name__ == "__main__":
     # 4. Create an ECS Service
     task_definition_arn = f"arn:aws:ecs:REGION:ACCOUNT_ID:task-definition/{task_family}"
     create_ecs_service(cluster_name, service_name, task_definition_arn, desired_count)
+
+if __name__ == "__main__":
+    main()

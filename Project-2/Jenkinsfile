@@ -8,9 +8,20 @@ pipeline {
         ECS_SERVICE = 'flask-crud-ecs-service'
         TASK_DEFINITION_FAMILY = 'flask-crud-family'
         CONTAINER_IMAGE = ''
+        CPU = '256'
+        MEMORY = '512'
+        DESIRED_COUNT = '1'
     }
 
     stages {
+        stage('Checkout') {
+            steps {
+                checkout([$class: 'GitSCM', branches: [[name: '*/main']], userRemoteConfigs: [[url: 'https://github.com/rajrules21/Jenkins-Projects']]])
+                //git 'https://github.com/rajrules21/Jenkins-Projects'
+            }
+        }
+
+
         stage('Install dependencies') {
             steps {
                 script {
@@ -67,7 +78,7 @@ pipeline {
             steps {
                 script {
                     // Update ECS service with new task definition
-                    sh "aws ecs update-service --cluster ${ECS_CLUSTER} --service ${ECS_SERVICE} --task-definition ${TASK_DEFINITION_FAMILY}:latest"
+                    sh "python ecs_script.py ${ECS_CLUSTER} ${TASK_DEFINITION_FAMILY} ${CONTAINER_IMAGE} ${CPU} ${MEMORY} ${ECS_SERVICE} ${DESIRED_COUNT}"
                 }
             }
         }
