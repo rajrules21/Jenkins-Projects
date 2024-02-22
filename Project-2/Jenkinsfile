@@ -46,13 +46,6 @@ pipeline {
             }
         }
         
-        stage('Create ECR Repository') {
-            steps {
-                script {
-
-                }
-            }
-        } 
 
         stage('Build Docker Image') {
             steps {
