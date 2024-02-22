@@ -1,3 +1,6 @@
+def ECR_REPO // Define ECR_REPO variable in a higher scope
+def CONTAINER_IMAGE // Define CONTAINER_IMAGE variable in a higher scope
+
 pipeline {
     agent any
 
@@ -34,7 +37,6 @@ pipeline {
                 script {
                     // Run the Python script with the AWS_DEFAULT_REGION environment variable
                     withAWS(region: AWS_DEFAULT_REGION) {
-                        //sh 'python3 Project-2/create_ecr.py'
                         // Run Python script to create ECR repository
                         def ecrRepo = sh(script: 'python3 Project-2/create_ecr.py', returnStdout: true).trim()
                         // Parse the output to extract the repository name
