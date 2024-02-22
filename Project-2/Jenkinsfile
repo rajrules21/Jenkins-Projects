@@ -17,16 +17,13 @@ pipeline {
         stage('Checkout') {
             steps {
                 checkout([$class: 'GitSCM', branches: [[name: '*/main']], userRemoteConfigs: [[url: 'https://github.com/rajrules21/Jenkins-Projects']]])
-                //git 'https://github.com/rajrules21/Jenkins-Projects'
             }
         }
-
 
         stage('Install dependencies') {
             steps {
                 script {
                     // Install dependencies using pip
-                    sh 'pwd'
                     sh 'pip install -r Project-2/requirements.txt'
                 }
             }
@@ -45,7 +42,6 @@ pipeline {
             }
         } 
 
-
         stage('Build Docker Image') {
             steps {
                 script {
@@ -54,13 +50,11 @@ pipeline {
             }
         }
 
-       
-
         stage('Push Docker Image to ECR') {
             steps {
                 script {
                     withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws-creds', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
-                        sh "aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${ECR_REPO}"
+                        sh "aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"
                         docker.image(CONTAINER_IMAGE).push("latest")
                     }
                 }
