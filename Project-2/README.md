@@ -20,6 +20,7 @@ Welcome to our Flask CRUD Application Deployment project! In this project, we'll
 - **Docker:** Containerization technology for packaging the application.
 - **AWS ECR:** Container registry service for hosting and managing Docker images.
 - **AWS ECS:** Container orchestration service for deploying and managing Docker containers.
+- **Snyk:** SAST (static application security testing) tool for devsecops.
 
 ## Project Structure:
 
