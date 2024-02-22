@@ -32,12 +32,24 @@ pipeline {
         stage('Create ECR Repository') {
             steps {
                 script {
-                    // Run Python script to create ECR repository
-                    def ecrRepo = sh(script: 'python3 Project-2/create_ecr.py', returnStdout: true).trim()
-                    // Parse the output to extract the repository name
-                    env.ECR_REPO = ecrRepo
-                    // Set the CONTAINER_IMAGE variable with the repository name
-                    env.CONTAINER_IMAGE = "${AWS_DEFAULT_REGION}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${ECR_REPO}"
+                    // Run the Python script with the AWS_DEFAULT_REGION environment variable
+                    withAWS(region: AWS_DEFAULT_REGION) {
+                        //sh 'python3 Project-2/create_ecr.py'
+                        // Run Python script to create ECR repository
+                        def ecrRepo = sh(script: 'python3 Project-2/create_ecr.py', returnStdout: true).trim()
+                        // Parse the output to extract the repository name
+                        env.ECR_REPO = ecrRepo
+                        // Set the CONTAINER_IMAGE variable with the repository name
+                        env.CONTAINER_IMAGE = "${AWS_DEFAULT_REGION}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${ECR_REPO}"
+                    }
+                }
+            }
+        }
+        
+        stage('Create ECR Repository') {
+            steps {
+                script {
+
                 }
             }
         } 
