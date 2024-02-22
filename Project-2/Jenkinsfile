@@ -26,6 +26,7 @@ pipeline {
             steps {
                 script {
                     // Install dependencies using pip
+                    sh 'sudo apt update && sudo apt install python3-pip'
                     sh 'pip install -r requirements.txt'
                 }
             }
