@@ -7,6 +7,8 @@ Welcome to our Simple Flask CRUD Application  project! In this project, we aim t
 ## Objectives:
 
 - **Develop a Simple Flask CRUD Application:** Create a Flask application that allows users to perform create, read, update and delete operations on a DynamoDB table.
+
+- **Create a DynamoDB Table:** write a python script to create a dynamodb tab;e
   
 - **CI/CD Pipeline Setup:** Implement a Continuous Integration/Continuous Deployment (CI/CD) pipeline using Jenkins to automate the build, test, and deployment processes of the application.
   
