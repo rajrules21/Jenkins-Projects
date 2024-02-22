@@ -6,6 +6,7 @@ pipeline {
 
     environment {
         AWS_DEFAULT_REGION = 'ap-south-1'
+        AWS_ACCOUNT_ID = credentials('aws_account_id')
         ECR_REPO = ''
         ECS_CLUSTER = 'flask-crud-app-cluster'
         ECS_SERVICE = 'flask-crud-ecs-service'
@@ -32,18 +33,30 @@ pipeline {
             }
         }
 
-        stage('Create ECR Repository') {
+         stage('Create ECR Repository') {
             steps {
                 script {
-                    // Run the Python script with the AWS_DEFAULT_REGION environment variable
+                    // Run the Python script to create ECR repository
                     withAWS(region: AWS_DEFAULT_REGION) {
-                        // Run Python script to create ECR repository
-                        def ecrRepo = sh(script: 'python3 Project-2/create_ecr.py', returnStdout: true).trim()
+                        def ecrRepoOutput = sh(script: "python3 Project-2/create_ecr.py", returnStdout: true).trim()
+                        def ecrRepo = ecrRepoOutput.tokenize()[2] 
                         // Parse the output to extract the repository name
-                        env.ECR_REPO = ecrRepo
+                        ECR_REPO = ecrRepo
                         // Set the CONTAINER_IMAGE variable with the repository name
-                        env.CONTAINER_IMAGE = "${AWS_DEFAULT_REGION}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${ECR_REPO}"
+                        CONTAINER_IMAGE = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${ECR_REPO}"
+                        echo "ECR_REPO: ${ECR_REPO}"
+                        echo "CONTAINER_IMAGE: ${CONTAINER_IMAGE}"
                     }
+                }
+            }
+         }
+         
+        stage('Display ECR Repo and Container Image') {
+            steps {
+                script {
+                    // Display values of ECR_REPO and CONTAINER_IMAGE
+                    echo "ECR_REPO: ${ECR_REPO}"
+                    echo "CONTAINER_IMAGE: ${CONTAINER_IMAGE}"
                 }
             }
         }
