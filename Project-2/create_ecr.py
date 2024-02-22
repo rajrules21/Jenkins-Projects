@@ -22,4 +22,8 @@ def create_ecr_repository(repository_name):
 
 if __name__ == "__main__":
     repository_name = "flask-crud-image-repo"  # Replace with your desired repository name
-    create_ecr_repository(repository_name)
+    repository_arn = create_ecr_repository(repository_name)
+    if repository_arn:
+        print(f"Repository ARN: {repository_arn}")
+    else:
+        print("Failed to create repository.")
