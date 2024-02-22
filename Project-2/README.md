@@ -40,9 +40,10 @@ Welcome to our Flask CRUD Application Deployment project! In this project, we'll
 2. **Build Docker Image:** Use Dockerfile to build a Docker image of the Flask application.
 3. **Create ECR Repository:** Run a Python script to create an ECR repository for storing Docker images.
 4. **Push Docker Image to ECR:** Push the built Docker image to the ECR repository.
-5. **Create ECS Cluster:** Run a Python script to create an ECS cluster for deploying Docker containers.
-6. **Deploy Flask Application to ECS:** Deploy the Docker container with the Flask application to the ECS cluster.
-7. **Integrate SAST with Snyk:** Perform static application security testing using Snyk as part of the Jenkins pipeline.
+5. **Integrate SAST with Snyk:** Perform static application security testing using Snyk as part of the Jenkins pipeline.
+6. **Create ECS Cluster:** Run a Python script to create an ECS cluster for deploying Docker containers.
+7. **Deploy Flask Application to ECS:** Deploy the Docker container with the Flask application to the ECS cluster.
+
 
 ## Getting Started:
 
