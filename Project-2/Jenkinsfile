@@ -26,6 +26,7 @@ pipeline {
             steps {
                 script {
                     // Install dependencies using pip
+                    sh 'pwd'
                     sh 'pip install -r requirements.txt'
                 }
             }
