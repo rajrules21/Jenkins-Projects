@@ -33,6 +33,18 @@ pipeline {
             }
         }
 
+        stage('Fetch and Delete ECR Repository') {
+            steps {
+                script {
+                    // Call the Python script to fetch and delete the ECR repository
+                    withAWS(region: AWS_DEFAULT_REGION) {
+                        sh "python3 Project-2/fetch_and_delete_ecr.py ${ECR_REPO} ${AWS_DEFAULT_REGION}"
+                    }
+                }
+            }
+        }
+
+
          stage('Create ECR Repository') {
             steps {
                 script {
