@@ -1,4 +1,5 @@
 import boto3
+import os
 
 def create_ecr_repository(repository_name, region_name):
     try:
