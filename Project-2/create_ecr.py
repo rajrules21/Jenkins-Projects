@@ -12,7 +12,11 @@ def create_ecr_repository(repository_name):
     """
     try:
         ecr_client = boto3.client('ecr')
-        response = ecr_client.create_repository(repositoryName=repository_name)
+        response = ecr_client.create_repository(repositoryName=repository_name,tags=[
+        {
+            'Key': 'image',
+            'Value': 'flask-crud-app'
+        })
         repository_arn = response['repository']['repositoryArn']
         print(f"ECR repository '{repository_name}' created successfully.")
         return repository_arn
