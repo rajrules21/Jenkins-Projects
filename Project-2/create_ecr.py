@@ -1,22 +1,21 @@
 import boto3
 
-def create_ecr_repository(repository_name):
-    """
-    Create an ECR repository with the given name.
-
-    Args:
-    - repository_name: The name of the ECR repository to create.
-
-    Returns:
-    - The ARN of the created repository if successful, None otherwise.
-    """
+def create_ecr_repository(repository_name, region_name):
     try:
-        ecr_client = boto3.client('ecr')
-        response = ecr_client.create_repository(repositoryName=repository_name,tags=[
-        {
-            'Key': 'image',
-            'Value': 'flask-crud-app'
-        }])
+        # Create a Boto3 client for ECR in the specified region
+        ecr_client = boto3.client('ecr', region_name=region_name)
+
+        # Create the ECR repository
+        response = ecr_client.create_repository(
+            repositoryName=repository_name,
+            tags=[
+                {
+                    'Key': 'image',
+                    'Value': 'flask-crud-app'
+                }
+            ]
+        )
+        
         repository_arn = response['repository']['repositoryArn']
         print(f"ECR repository '{repository_name}' created successfully.")
         return repository_arn
@@ -26,7 +25,13 @@ def create_ecr_repository(repository_name):
 
 if __name__ == "__main__":
     repository_name = "flask-crud-image-repo"  # Replace with your desired repository name
-    repository_arn = create_ecr_repository(repository_name)
+    
+    # Get the region name from the environment variable
+    region_name = os.getenv('AWS_DEFAULT_REGION')
+    
+    # Call the function to create the ECR repository
+    repository_arn = create_ecr_repository(repository_name, region_name)
+    
     if repository_arn:
         print(f"Repository ARN: {repository_arn}")
     else:
