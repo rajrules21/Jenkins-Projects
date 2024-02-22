@@ -36,7 +36,7 @@ pipeline {
             steps {
                 script {
                     // Run Python script to create ECR repository
-                    def ecrRepo = sh(script: 'python create_ecr.py', returnStdout: true).trim()
+                    def ecrRepo = sh(script: 'python3 create_ecr.py', returnStdout: true).trim()
                     // Parse the output to extract the repository name
                     env.ECR_REPO = ecrRepo
                     // Set the CONTAINER_IMAGE variable with the repository name
@@ -79,7 +79,7 @@ pipeline {
             steps {
                 script {
                     // Update ECS service with new task definition
-                    sh "python ecs_script.py ${ECS_CLUSTER} ${TASK_DEFINITION_FAMILY} ${CONTAINER_IMAGE} ${CPU} ${MEMORY} ${ECS_SERVICE} ${DESIRED_COUNT}"
+                    sh "python3 ecs_script.py ${ECS_CLUSTER} ${TASK_DEFINITION_FAMILY} ${CONTAINER_IMAGE} ${CPU} ${MEMORY} ${ECS_SERVICE} ${DESIRED_COUNT}"
                 }
             }
         }
