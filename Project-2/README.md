@@ -1,43 +1,53 @@
-# Jenkins-Project-2: Deploy a Python Flask CRUD App Using CI/CD Pipeline in Jenkins
+# Jenkins-Project-2: Flask CRUD Application Deployment with CI/CD Pipeline
 
-## Project Introduction:
+## Project Overview:
 
-Welcome to our Simple Flask CRUD Application  project! In this project, we aim to develop a crud application using Flask, a lightweight Python web framework, to manage crud functionality in a DynamoDB Table. The main objective of this project is to provide hands-on experience with building a web application, setting up a CI/CD pipeline using Jenkins, and deploying the application to AWS AWS ECS.
+Welcome to our Flask CRUD Application Deployment project! In this project, we'll develop a Flask application with CRUD (Create, Read, Update, Delete) functionality for managing items. The application will be deployed using a CI/CD pipeline orchestrated by Jenkins. Our goal is to automate the build, test, and deployment processes while ensuring the reliability and scalability of our application.
 
 ## Objectives:
 
-- **Develop a Simple Flask CRUD Application:** Create a Flask application that allows users to perform create, read, update and delete operations on a DynamoDB table.
-
-- **Create a DynamoDB Table:** write a python script to create a dynamodb tab;e
+- **Flask CRUD Application Development:** Develop a Flask application with CRUD functionality for managing items in a database.
   
-- **CI/CD Pipeline Setup:** Implement a Continuous Integration/Continuous Deployment (CI/CD) pipeline using Jenkins to automate the build, test, and deployment processes of the application.
+- **CI/CD Pipeline Setup:** Implement a Continuous Integration/Continuous Deployment (CI/CD) pipeline using Jenkins to automate the build, test, and deployment processes of the Flask application.
   
-- **Deployment to AWS EC2:** Deploy the Flask application to an AWS EC2 instance using Docker containers.
+- **Deployment to AWS:** Deploy the Flask application to AWS ECS (Elastic Container Service) using Docker containers.
 
 ## Tools and Technologies:
 
-- **Flask:** Python web framework for building the application.
-- **HTML/CSS:** Frontend markup and styling.
+- **Flask:** Python web framework for building the CRUD application.
+- **DynamoDB:** NoSQL database service from AWS for storing application data.
 - **Jenkins:** CI/CD automation server for orchestrating the pipeline.
 - **Docker:** Containerization technology for packaging the application.
-- **AWS EC2:** Virtual server instances for hosting the application.
+- **AWS ECS:** Container orchestration service for deploying and managing Docker containers.
 
-## Creating the Jenkins CI/CD Pipeline:
+## Project Structure:
 
-- **GitHub Repository Setup:** Create a GitHub repository to host the project code, including the Flask application, Dockerfile, Jenkinsfile, and HTML templates.
-  
-- **Jenkins Installation:** Install Jenkins on a server (could be an EC2 instance) and set up necessary plugins like Git, Docker, and AWS Pipeline.
-  
-- **Jenkins Configuration:** Configure Jenkins credentials for accessing the GitHub repository, Docker Hub (or another container registry), and AWS services.
-  
-- **Writing Jenkinsfile:** Define the CI/CD pipeline stages and steps in the Jenkinsfile. This includes checking out the code from GitHub, building the Docker image, pushing it to the container registry, deploying to AWS EC2, and deploying to AWS ECS.
-  
-- **Pipeline Execution:** Create a new pipeline job in Jenkins and link it to the GitHub repository. Jenkins will automatically trigger the pipeline whenever changes are pushed to the repository.
+- **app.py:** Main Python file containing the Flask application logic.
+- **create_ecr.py:** Python script to create an ECR (Elastic Container Registry) repository.
+- **create_ecs_cluster.py:** Python script to create an ECS (Elastic Container Service) cluster.
+- **Dockerfile:** Configuration file for building the Docker image of the Flask application.
+- **dynamodb_setup.py:** Python script for setting up the DynamoDB database.
+- **Jenkinsfile:** Jenkins pipeline script for automating CI/CD processes.
+- **requirements.txt:** File containing Python dependencies for the project.
+- **templates:** Directory containing HTML templates for the Flask application.
+- **__pycache__:** Directory containing cached Python bytecode.
 
-## Deployment to AWS EC2:
+## CI/CD Pipeline Steps:
 
-- **EC2 Instance Setup:** Launch an EC2 instance and configure it with Docker to run Docker containers.
-  
-- **Deploying the Application:** Use SSH to connect to the EC2 instance from Jenkins and pull the Docker image. Run the Docker container to deploy the Flask application.
+1. **Setup DynamoDB:** Create a DynamoDB table using boto3 in a separate Python script.
+2. **Build Docker Image:** Use Dockerfile to build a Docker image of the Flask application.
+3. **Create ECR Repository:** Run a Python script to create an ECR repository for storing Docker images.
+4. **Push Docker Image to ECR:** Push the built Docker image to the ECR repository.
+5. **Create ECS Cluster:** Run a Python script to create an ECS cluster for deploying Docker containers.
+6. **Deploy Flask Application to ECS:** Deploy the Docker container with the Flask application to the ECS cluster.
+7. **Integrate SAST with Snyk:** Perform static application security testing using Snyk as part of the Jenkins pipeline.
 
-By following these steps, we'll be able to create a robust CI/CD pipeline for our Flask application and deploy it seamlessly to AWS EC2  environments.
+## Getting Started:
+
+1. **Clone the Repository:** Clone the project repository from GitHub.
+2. **Install Dependencies:** Install Python dependencies listed in `requirements.txt`.
+3. **Configure AWS Credentials:** Set up AWS credentials in Jenkins for accessing AWS services.
+4. **Configure Jenkins Pipeline:** Create a new pipeline job in Jenkins and link it to the GitHub repository. Configure Jenkinsfile to define the CI/CD pipeline stages.
+5. **Run the Pipeline:** Trigger the pipeline in Jenkins to build, test, and deploy the Flask application automatically.
+
+By following these steps, we'll be able to deploy our Flask CRUD application seamlessly using a CI/CD pipeline managed by Jenkins.
