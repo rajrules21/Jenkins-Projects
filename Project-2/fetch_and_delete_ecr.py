@@ -14,6 +14,7 @@ def fetch_and_delete_ecr(repository_name, region_name):
             # If repository exists, delete it
             ecr_client.delete_repository(repositoryName=repository_name, force=True)
             print(f"ECR repository '{repository_name}' deleted successfully.")
+            return True
         else:
             print(f"ECR repository '{repository_name}' not found. Skipping deletion.")
             return False  # Indicate that deletion was skipped
@@ -21,8 +22,6 @@ def fetch_and_delete_ecr(repository_name, region_name):
     except Exception as e:
         print(f"An error occurred while deleting ECR repository '{repository_name}': {e}")
         sys.exit(1)
-
-    return True  # Indicate that deletion was successful or skipped
 
 if __name__ == "__main__":
     repository_name = "flask-crud-image-repo"  # Repository name passed as command-line argument
