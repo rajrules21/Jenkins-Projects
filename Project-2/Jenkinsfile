@@ -4,7 +4,6 @@ def IMAGE_NAME = 'flask-crud-app'
 def dockerImage
 def dockerImageReference
 
-
 pipeline {
     agent {
         label 'jenkins-agent'
@@ -13,6 +12,7 @@ pipeline {
     parameters {
         booleanParam(name: 'skipStage', defaultValue: true, description: 'Skip the stage on first build')
     }
+   
 
     environment {
         AWS_DEFAULT_REGION = 'ap-south-1'
@@ -38,7 +38,6 @@ pipeline {
             steps {
                 script {
                     // Install dependencies using pip
-                    sh 'sudo apt install python3-pip -y '
                     sh 'pip install -r Project-2/requirements.txt'
                 }
             }
@@ -47,15 +46,17 @@ pipeline {
         stage('DynamoDB Setup') {
             steps {
                 script {
-                    // Call the Python script to create DynamoDB table
-                    sh "python3 Project-2/dynamodb_setup.py"
+                    // Call the Python script to fetch and delete the ECR repository
+                    withAWS(region: AWS_DEFAULT_REGION) {
+                        sh "python3 Project-2/dynamodb_setup.py"
+                    }
                 }
             }
         }
 
         stage('Fetch and Delete ECR Repository') {
             when {
-                expression { !params.skipECRFetchAndDelete || ecrFetchAndDeleteCompleted }
+                expression { !params.skipStage || currentBuild.number > 1 }
             }
             steps {
                 script {
@@ -63,7 +64,6 @@ pipeline {
                     withAWS(region: AWS_DEFAULT_REGION) {
                         sh "python3 Project-2/fetch_and_delete_ecr.py ${ECR_REPO} ${AWS_DEFAULT_REGION}"
                     }
-                    ecrFetchAndDeleteCompleted = true // Set the flag to indicate completion
                 }
             }
         }
@@ -133,14 +133,4 @@ pipeline {
 
         
     }
-
-    post {
-        always {
-            script {
-                // Call the Python script to delete DynamoDB table
-                sh "python3 Project-2/dynamodb_delete.py"
-            }
-        }
-    }
-
 }
