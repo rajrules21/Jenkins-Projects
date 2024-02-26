@@ -15,7 +15,7 @@ pipeline {
    
 
     environment {
-        AWS_DEFAULT_REGION = 'ap-south-1'
+        AWS_DEFAULT_REGION = 'us-east-1'
         AWS_ACCOUNT_ID = credentials('aws_account_id')
         AWS_CREDENTIALS_ID = 'aws-credentials-id'
         ECS_CLUSTER = 'flask-crud-app-cluster'
