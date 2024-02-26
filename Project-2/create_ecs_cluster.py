@@ -60,6 +60,7 @@ def create_ecs_service(cluster_name, service_name, task_definition_arn, desired_
 def main():
     try:
         # Extract command-line arguments
+        aws_account_id = os.environ.get('AWS_ACCOUNT_ID')
         region_name = sys.argv[1]
         cluster_name = sys.argv[2]
         task_family = sys.argv[3]
@@ -79,7 +80,7 @@ def main():
         register_task_definition(task_definition)
 
         # 4. Create an ECS Service for Fargate
-        task_definition_arn = f"arn:aws:ecs:{region_name}:ACCOUNT_ID:task-definition/{task_family}"
+        task_definition_arn = f"arn:aws:ecs:{region_name}:{aws_account_id}:task-definition/{task_family}"
         create_ecs_service(cluster_name, service_name, task_definition_arn, desired_count)
     except Exception as e:
         print("An error occurred:", str(e))
