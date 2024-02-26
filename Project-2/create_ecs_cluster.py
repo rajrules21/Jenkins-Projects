@@ -49,8 +49,8 @@ def main():
     cluster_name = sys.argv[2]
     task_family = sys.argv[3]
     container_image = sys.argv[4]
-    cpu = sys.argv[5]
-    memory = sys.argv[6]
+    cpu = int(sys.argv[5])
+    memory = int(sys.argv[6])
     service_name = sys.argv[7]
     desired_count = int(sys.argv[8])
 
