@@ -49,7 +49,7 @@ def create_ecs_service(cluster_name, service_name, task_definition_arn, desired_
         networkConfiguration={
             'awsvpcConfiguration': {
                 'subnets': ['subnet-0796e98c324b7e10d'],  # Specify your subnet IDs
-                'securityGroups': ['flask-project-sg'],  # Specify your security group IDs
+                'securityGroups': ['sg-04167ed144aefc3d8'],  # Specify your security group IDs
                 'assignPublicIp': 'DISABLED'  # Specify 'ENABLED' if you want to assign public IP addresses
             }
         }
