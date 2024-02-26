@@ -36,11 +36,12 @@ def register_task_definition(task_family, container_image, cpu, memory):
     return response['taskDefinition']['taskDefinitionArn']
 
 # 3. Create Task Definition
-def create_task_definition(task_family, task_definition_arn):
-    response = ecs_client.create_task_set(
-        taskDefinition=task_definition_arn,
+def create_task_definition(task_family, task_definition_arn, cluster_name, service_name, desired_count):
+    response = ecs_client.create_service(
         cluster=cluster_name,
-        service=service_name,
+        serviceName=service_name,
+        taskDefinition=task_definition_arn,
+        desiredCount=desired_count,
         launchType='FARGATE',  # Specify Fargate as the launch type
         networkConfiguration={
             'awsvpcConfiguration': {
@@ -48,8 +49,7 @@ def create_task_definition(task_family, task_definition_arn):
                 'securityGroups': ['sg-04167ed144aefc3d8'],  # Specify your security group IDs
                 'assignPublicIp': 'DISABLED'  # Specify 'ENABLED' if you want to assign public IP addresses
             }
-        },
-        desiredCount=desired_count,
+        }
     )
     print("ECS Service created:", response['service']['serviceName'])
 
