@@ -5,10 +5,9 @@ import boto3
 ecs_client = boto3.client('ecs')
 
 # 1. Create an ECS Cluster
-def create_ecs_cluster(cluster_name):
+def create_ecs_cluster(region_name, cluster_name):
     response = ecs_client.create_cluster(
-        clusterName=cluster_name
-    )
+        clusterName=cluster_name)
     print("ECS Cluster created:", response['cluster']['clusterName'])
 
 # 2. Define a Task Definition
@@ -46,17 +45,17 @@ def create_ecs_service(cluster_name, service_name, task_definition_arn, desired_
 # Main function
 def main():
     # Extract command-line arguments
-    cluster_name = sys.argv[1]
-    task_family = sys.argv[2]
-    container_image = sys.argv[3]
-    cpu = sys.argv[4]
-    memory = sys.argv[5]
-    service_name = sys.argv[6]
-    desired_count = int(sys.argv[7])
+    region_name = sys.argv[1]
+    cluster_name = sys.argv[2]
+    task_family = sys.argv[3]
+    container_image = sys.argv[4]
+    cpu = sys.argv[5]
+    memory = sys.argv[6]
+    service_name = sys.argv[7]
+    desired_count = int(sys.argv[8])
 
     # 1. Create an ECS Cluster
-    create_ecs_cluster(cluster_name)
-
+    create_ecs_cluster(region_name, cluster_name)
     # 2. Define a Task Definition
     task_definition = define_task_definition(task_family, container_image, cpu, memory)
 
@@ -64,7 +63,7 @@ def main():
     register_task_definition(task_definition)
 
     # 4. Create an ECS Service
-    task_definition_arn = f"arn:aws:ecs:REGION:ACCOUNT_ID:task-definition/{task_family}"
+    task_definition_arn = f"arn:aws:ecs:{region_name}:ACCOUNT_ID:task-definition/{task_family}"
     create_ecs_service(cluster_name, service_name, task_definition_arn, desired_count)
 
 if __name__ == "__main__":
