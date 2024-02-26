@@ -1,13 +1,23 @@
-def ECR_REPO // Define ECR_REPO variable in a higher scope
+def ECR_REPO = 'flask-crud-image-repo'// Define ECR_REPO variable in a higher scope
 def CONTAINER_IMAGE // Define CONTAINER_IMAGE variable in a higher scope
+def IMAGE_NAME = 'flask-crud-app'
+def dockerImage
+def dockerImageReference
+
 
 pipeline {
-    agent any
+    agent {
+        label 'jenkins-agent'
+    }
+    
+    parameters {
+        booleanParam(name: 'skipStage', defaultValue: true, description: 'Skip the stage on first build')
+    }
 
     environment {
         AWS_DEFAULT_REGION = 'ap-south-1'
         AWS_ACCOUNT_ID = credentials('aws_account_id')
-        ECR_REPO = ''
+        AWS_CREDENTIALS_ID = 'aws-credentials-id'
         ECS_CLUSTER = 'flask-crud-app-cluster'
         ECS_SERVICE = 'flask-crud-ecs-service'
         TASK_DEFINITION_FAMILY = 'flask-crud-family'
@@ -28,30 +38,44 @@ pipeline {
             steps {
                 script {
                     // Install dependencies using pip
+                    sh 'sudo apt install python3-pip -y '
                     sh 'pip install -r Project-2/requirements.txt'
+                }
+            }
+        }
+        
+        stage('DynamoDB Setup') {
+            steps {
+                script {
+                    // Call the Python script to create DynamoDB table
+                    sh "python3 Project-2/dynamodb_setup.py"
                 }
             }
         }
 
         stage('Fetch and Delete ECR Repository') {
+            when {
+                expression { !params.skipECRFetchAndDelete || ecrFetchAndDeleteCompleted }
+            }
             steps {
                 script {
                     // Call the Python script to fetch and delete the ECR repository
                     withAWS(region: AWS_DEFAULT_REGION) {
                         sh "python3 Project-2/fetch_and_delete_ecr.py ${ECR_REPO} ${AWS_DEFAULT_REGION}"
                     }
+                    ecrFetchAndDeleteCompleted = true // Set the flag to indicate completion
                 }
             }
         }
-
-
-         stage('Create ECR Repository') {
+        
+        
+        stage('Create ECR Repository') {
             steps {
                 script {
                     // Run the Python script to create ECR repository
                     withAWS(region: AWS_DEFAULT_REGION) {
                         def ecrRepoOutput = sh(script: "python3 Project-2/create_ecr.py", returnStdout: true).trim()
-                        def ecrRepo = ecrRepoOutput.tokenize()[2] 
+                        def ecrRepo = ecrRepoOutput.tokenize()[2].replaceAll(/['"]/,'')  // Remove surrounding quotes 
                         // Parse the output to extract the repository name
                         ECR_REPO = ecrRepo
                         // Set the CONTAINER_IMAGE variable with the repository name
@@ -73,41 +97,50 @@ pipeline {
             }
         }
         
-
         stage('Build Docker Image') {
             steps {
                 script {
-                    docker.build(CONTAINER_IMAGE)
+                    // Build the Docker image
+                    dockerImage = docker.build(IMAGE_NAME + ":latest", "-f Project-2/Dockerfile Project-2/")
                 }
             }
         }
-
-        stage('Push Docker Image to ECR') {
+        
+        stage('Scan Docker Image with Trivy') {
             steps {
                 script {
-                    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws-creds', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
-                        sh "aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"
-                        docker.image(CONTAINER_IMAGE).push("latest")
+                    def imageName = env.IMAGE_NAME ?: "${IMAGE_NAME}:latest"
+                    sh "docker run -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:0.28.0 image ${imageName}"
+                }
+            }
+        }
+        
+        stage('Push Docker Image to ECR') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: AWS_CREDENTIALS_ID, usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                    script {
+                        def loginCmd = "aws ecr get-login-password --region ${AWS_DEFAULT_REGION}"
+                        def password = sh(returnStdout: true, script: loginCmd).trim()
+                        def dockerLoginCmd = "docker login --username AWS --password ${password} ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"
+                        sh dockerLoginCmd
+                        sh "docker tag ${IMAGE_NAME}:latest ${CONTAINER_IMAGE}:latest"
+                        sh "docker push ${CONTAINER_IMAGE}:latest"
                     }
                 }
             }
         }
+     
 
-        stage('SAST with Snyk') {
-            steps {
-                script {
-                    sh "snyk test --docker ${CONTAINER_IMAGE}:latest"
-                }
-            }
-        }
+        
+    }
 
-        stage('Deploy to ECS') {
-            steps {
-                script {
-                    // Update ECS service with new task definition
-                    sh "python3 Project-2/ecs_script.py ${ECS_CLUSTER} ${TASK_DEFINITION_FAMILY} ${CONTAINER_IMAGE} ${CPU} ${MEMORY} ${ECS_SERVICE} ${DESIRED_COUNT}"
-                }
+    post {
+        always {
+            script {
+                // Call the Python script to delete DynamoDB table
+                sh "python3 Project-2/dynamodb_delete.py"
             }
         }
     }
+
 }
