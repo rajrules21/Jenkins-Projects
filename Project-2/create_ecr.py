@@ -12,7 +12,7 @@ def create_ecr_repository(repository_name, region_name):
             tags=[
                 {
                     'Key': 'image',
-                    'Value': 'flask-crud-app'
+                    'Value': 'flask-login-app'
                 }
             ]
         )
@@ -25,7 +25,7 @@ def create_ecr_repository(repository_name, region_name):
         return None
 
 if __name__ == "__main__":
-    repository_name = "flask-crud-image-repo"  # Replace with your desired repository name
+    repository_name = "flask-login-app"  # Replace with your desired repository name
     
     # Get the region name from the environment variable
     region_name = os.getenv('AWS_DEFAULT_REGION')
