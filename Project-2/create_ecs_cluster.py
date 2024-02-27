@@ -1,12 +1,11 @@
-import sys
 import boto3
 import os
-
-# Fetch the region name from the environment variable set by Jenkins
-region_name = os.getenv('AWS_DEFAULT_REGION')
+import sys
 
 # Initialize ECS client
-ecs_client = boto3.client('ecs')
+ecs_client = boto3.client("ecs", region_name="ap-south-1")
+
+
 
 # 1. Create an ECS Cluster
 def create_ecs_cluster(region_name, cluster_name):
@@ -17,44 +16,56 @@ def create_ecs_cluster(region_name, cluster_name):
 
 # 2. Define a Task Definition for Fargate
 def define_task_definition(task_family, container_image, cpu, memory):
-    task_definition = {
-        'family': task_family,
-        'networkMode': 'awsvpc', # Set network mode to awsvpc for Fargate
-        'containerDefinitions': [
+    print("CPU value:", cpu)
+    response = ecs_client.register_task_definition(
+        containerDefinitions=[
             {
-                'name': task_family,
-                'image': container_image,
-                'cpu': cpu,
-                'memory': memory,
-                'essential': True,
-                # Add more container configuration as needed
-            },
+                "name": task_family,
+                "image": container_image,
+                "cpu": cpu,
+                "memory": memory,
+                "essential": True,
+                "portMappings": [
+                    {
+                        "containerPort": 5000,
+                        "hostPort": 5000,
+                        "protocol": "tcp"
+                    }
+                ],                
+            }
         ],
-    }
-    return task_definition
-
-# 3. Register Task Definition
-def register_task_definition(task_definition):
-    response = ecs_client.register_task_definition(**task_definition)
+        family=task_family,
+        cpu="1024",
+        memory="2048",
+        networkMode="awsvpc",
+        requiresCompatibilities=["FARGATE"],
+        runtimePlatform={
+            "cpuArchitecture": "X86_64",
+            "operatingSystemFamily": "LINUX"
+        },
+        executionRoleArn="arn:aws:iam::811172515558:role/AmazonSSMRoleForInstancesQuickSetup"
+    )
     print("Task Definition registered:", response['taskDefinition']['taskDefinitionArn'])
+    return response['taskDefinition']['taskDefinitionArn']
 
-# 4. Create an ECS Service for Fargate
+# 3. Create an ECS Service for Fargate
 def create_ecs_service(cluster_name, service_name, task_definition_arn, desired_count):
     response = ecs_client.create_service(
         cluster=cluster_name,
         serviceName=service_name,
         taskDefinition=task_definition_arn,
         desiredCount=desired_count,
-        launchType="FARGATE",  # Specify Fargate as the launch type
         networkConfiguration={
             'awsvpcConfiguration': {
                 'subnets': ['subnet-0796e98c324b7e10d'],  # Specify your subnet IDs
                 'securityGroups': ['sg-04167ed144aefc3d8'],  # Specify your security group IDs
-                'assignPublicIp': 'DISABLED'  # Specify 'ENABLED' if you want to assign public IP addresses
+                'assignPublicIp': 'ENABLED'  # Specify 'ENABLED' if you want to assign public IP addresses
             }
-        }
+        },
+        launchType="FARGATE"  # Specify Fargate as the launch type
     )
     print("ECS Service created:", response['service']['serviceName'])
+    return response['service']['serviceName']
 
 # Main function
 def main():
@@ -69,18 +80,14 @@ def main():
         memory = int(sys.argv[6])
         service_name = sys.argv[7]
         desired_count = int(sys.argv[8])
-
+        
         # 1. Create an ECS Cluster
-        create_ecs_cluster(region_name, cluster_name)
+        cluster_name = create_ecs_cluster(region_name, "my-ecs-name")
 
         # 2. Define a Task Definition for Fargate
-        task_definition = define_task_definition(task_family, container_image, cpu, memory)
+        task_definition_arn = define_task_definition(task_family, container_image, cpu, memory)
 
-        # 3. Register Task Definition
-        register_task_definition(task_definition)
-
-        # 4. Create an ECS Service for Fargate
-        task_definition_arn = f"arn:aws:ecs:{region_name}:{aws_account_id}:task-definition/{task_family}"
+        # 3. Create an ECS Service for Fargate
         create_ecs_service(cluster_name, service_name, task_definition_arn, desired_count)
     except Exception as e:
         print("An error occurred:", str(e))
