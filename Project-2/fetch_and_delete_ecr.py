@@ -24,7 +24,7 @@ def fetch_and_delete_ecr(repository_name, region_name):
         sys.exit(1)
 
 if __name__ == "__main__":
-    repository_name = "flask-crud-image-repo"  # Repository name passed as command-line argument
+    repository_name = "flask-login-app"  # Repository name passed as command-line argument
     region_name = os.getenv('AWS_DEFAULT_REGION')  # AWS region name passed as command-line argument
 
     # Call the function to fetch and delete the ECR repository
