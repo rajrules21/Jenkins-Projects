@@ -1,54 +1,94 @@
-from flask import Flask, render_template, request, redirect, url_for
-from flask_dynamo import Dynamo
-from dynamodb_setup import create_dynamodb_table  # Import the function
+from flask import Flask, render_template, request, redirect, url_for, session
+import sqlite3
+import re
 import os
 
+secret_key = os.urandom(24)
+
+ 
 app = Flask(__name__)
+app.secret_key = 'your_secret_key'
+ 
+# SQLite database setup
+DATABASE = 'loginapp.db'
+ 
+def create_table():
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS accounts (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT NOT NULL,
+            password TEXT NOT NULL,
+            email TEXT NOT NULL
+        )
+    ''')
+    conn.commit()
+    conn.close()
 
-# Configure DynamoDB
-app.config['DYNAMO_ENABLE_LOCAL'] = True
-app.config['DYNAMO_LOCAL_HOST'] = 'localhost'
-app.config['DYNAMO_LOCAL_PORT'] = 8000
-
-dynamo = Dynamo(app)
-
-# Call the function to create DynamoDB table
-create_dynamodb_table()
-
-# Define DynamoDB table
-items_table = dynamo.tables['Items']
+create_table()
 
 @app.route('/')
 def index():
-    # Retrieve all items from DynamoDB
-    items = items_table.scan()
-    return render_template('index.html', items=items)
+    msg = ''
+    return render_template('index.html', msg=msg)
 
-@app.route('/add', methods=['POST'])
-def add_item():
-    # Add a new item to DynamoDB
-    name = request.form['name']
-    description = request.form['description']
-    item = {'id': str(uuid.uuid4()), 'name': name, 'description': description}
-    items_table.put_item(Item=item)
-    return redirect(url_for('index'))
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    msg = ''
+    if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
+        username = request.form['username']
+        password = request.form['password']
+        conn = sqlite3.connect(DATABASE)
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM accounts WHERE username = ? AND password = ?', (username, password))
+        account = cursor.fetchone()
+        conn.close()
+        if account:
+            session['loggedin'] = True
+            session['id'] = account[0]
+            session['username'] = account[1]
+            msg = 'Logged in successfully!'
+            return render_template('index.html', msg=msg)
+        else:
+            msg = 'Incorrect username / password!'
+    return render_template('login.html', msg=msg)
 
-@app.route('/edit/<string:item_id>', methods=['GET', 'POST'])
-def edit_item(item_id):
-    # Edit an existing item in DynamoDB
-    item = items_table.get_item(Key={'id': item_id})
-    if request.method == 'POST':
-        item['name'] = request.form['name']
-        item['description'] = request.form['description']
-        items_table.put_item(Item=item)
-        return redirect(url_for('index'))
-    return render_template('edit.html', item=item)
+@app.route('/logout')
+def logout():
+    session.pop('loggedin', None)
+    session.pop('id', None)
+    session.pop('username', None)
+    return redirect(url_for('login'))
 
-@app.route('/delete/<string:item_id>', methods=['POST'])
-def delete_item(item_id):
-    # Delete an item from DynamoDB
-    items_table.delete_item(Key={'id': item_id})
-    return redirect(url_for('index'))
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    msg = ''
+    if request.method == 'POST' and 'username' in request.form and 'password' in request.form and 'email' in request.form:
+        username = request.form['username']
+        password = request.form['password']
+        email = request.form['email']
+        conn = sqlite3.connect(DATABASE)
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM accounts WHERE username = ?', (username,))
+        account = cursor.fetchone()
+        if account:
+            msg = 'Account already exists!'
+        elif not re.match(r'[^@]+@[^@]+\.[^@]+', email):
+            msg = 'Invalid email address!'
+        elif not re.match(r'[A-Za-z0-9]+', username):
+            msg = 'Username must contain only characters and numbers!'
+        elif not username or not password or not email:
+            msg = 'Please fill out the form!'
+        else:
+            cursor.execute('INSERT INTO accounts (username, password, email) VALUES (?, ?, ?)', (username, password, email))
+            conn.commit()
+            conn.close()
+            msg = 'You have successfully registered!'
+    elif request.method == 'POST':
+        msg = 'Please fill out the form!'
+    return render_template('register.html', msg=msg)
+
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
+    app.run(debug=True)

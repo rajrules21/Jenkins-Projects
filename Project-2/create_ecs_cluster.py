@@ -19,7 +19,7 @@ def create_ecs_cluster(region_name, cluster_name):
 def define_task_definition(task_family, container_image, cpu, memory):
     task_definition = {
         'family': task_family,
-        'networkMode': 'awsvpc',  # Set network mode to awsvpc for Fargate
+        'networkMode': 'awsvpc', # Set network mode to awsvpc for Fargate
         'containerDefinitions': [
             {
                 'name': task_family,
@@ -45,7 +45,7 @@ def create_ecs_service(cluster_name, service_name, task_definition_arn, desired_
         serviceName=service_name,
         taskDefinition=task_definition_arn,
         desiredCount=desired_count,
-        launchType='FARGATE',  # Specify Fargate as the launch type
+        launchType="FARGATE",  # Specify Fargate as the launch type
         networkConfiguration={
             'awsvpcConfiguration': {
                 'subnets': ['subnet-0796e98c324b7e10d'],  # Specify your subnet IDs

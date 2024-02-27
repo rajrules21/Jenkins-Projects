@@ -1,6 +1,6 @@
-def ECR_REPO = 'flask-crud-image-repo'// Define ECR_REPO variable in a higher scope
+def ECR_REPO = 'flask-login-image-repo'// Define ECR_REPO variable in a higher scope
 def CONTAINER_IMAGE // Define CONTAINER_IMAGE variable in a higher scope
-def IMAGE_NAME = 'flask-crud-app'
+def IMAGE_NAME = 'flask-login-app'
 def dockerImage
 def dockerImageReference
 
@@ -18,9 +18,9 @@ pipeline {
         AWS_DEFAULT_REGION = 'ap-south-1'
         AWS_ACCOUNT_ID = credentials('aws_account_id')
         AWS_CREDENTIALS_ID = 'aws-credentials-id'
-        ECS_CLUSTER = 'flask-crud-app-cluster'
-        ECS_SERVICE = 'flask-crud-ecs-service'
-        TASK_DEFINITION_FAMILY = 'flask-crud-family'
+        ECS_CLUSTER = 'flask-login-app-cluster'
+        ECS_SERVICE = 'flask-login-ecs-service'
+        TASK_DEFINITION_FAMILY = 'flask-login-app-family'
         CONTAINER_IMAGE = ''
         CPU = '256'
         MEMORY = '512'
@@ -43,16 +43,6 @@ pipeline {
             }
         }
         
-        stage('DynamoDB Setup') {
-            steps {
-                script {
-                    // Call the Python script to fetch and delete the ECR repository
-                    withAWS(region: AWS_DEFAULT_REGION) {
-                        sh "python3 Project-2/dynamodb_setup.py"
-                    }
-                }
-            }
-        }
 
         stage('Fetch and Delete ECR Repository') {
             when {
@@ -129,7 +119,15 @@ pipeline {
                 }
             }
         }
-     
+        
+        stage('Deploy to ECS') {
+            steps {
+                script {
+                    // Run the Python script to create ECS resources
+                    sh "python3 Project-2/create_ecs_cluster.py ${AWS_DEFAULT_REGION} ${ECS_CLUSTER} ${TASK_DEFINITION_FAMILY} ${CONTAINER_IMAGE} ${CPU} ${MEMORY} ${ECS_SERVICE} ${DESIRED_COUNT}"
+                }
+            }
+        }
 
         
     }

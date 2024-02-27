@@ -1,23 +1,20 @@
-# Use the official Python image as base
-FROM python:3.12-slim
-
-# Set environment variables
-ENV FLASK_APP=app.py \
-    FLASK_RUN_HOST=0.0.0.0 \
-    FLASK_RUN_PORT=5000
+FROM python:3.9
 
 # Set the working directory in the container
 WORKDIR /app
 
-# Copy the requirements file and install dependencies
-COPY requirements.txt requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
-
 # Copy the Flask application code into the container
-COPY . .
+COPY . /app
 
-# Expose the Flask application port
+# Install dependencies
+RUN pip install Flask
+
+# Copy the SQLite database file into the container
+COPY loginapp.db /app
+
+# Expose the port on which the Flask app will run
 EXPOSE 5000
 
 # Command to run the Flask application
+# Run the Flask application
 CMD flask run --host=0.0.0.0
