@@ -12,7 +12,9 @@ def create_ecs_cluster(region_name, cluster_name):
     response = ecs_client.create_cluster(
         clusterName=cluster_name
     )
-    print("ECS Cluster created:", response['cluster']['clusterName'])
+    cluster_name = response['cluster']['clusterName']  # Assign the returned cluster name
+    print("ECS Cluster created:", cluster_name)
+    return cluster_name  # Return the cluster name
 
 # 2. Define a Task Definition for Fargate
 def define_task_definition(task_family, container_image, cpu, memory):
