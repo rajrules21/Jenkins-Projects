@@ -45,7 +45,7 @@ def define_task_definition(task_family, container_image, cpu, memory):
             "cpuArchitecture": "X86_64",
             "operatingSystemFamily": "LINUX"
         },
-        executionRoleArn="arn:aws:iam::811172515558:role/AmazonSSMRoleForInstancesQuickSetup"
+        executionRoleArn="arn:aws:iam::{aws-account-id}:role/AmazonSSMRoleForInstancesQuickSetup" #replace aws-account-id with your id or fetch it from a variable
     )
     print("Task Definition registered:", response['taskDefinition']['taskDefinitionArn'])
     return response['taskDefinition']['taskDefinitionArn']
