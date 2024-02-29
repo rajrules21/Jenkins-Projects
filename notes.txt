@@ -17,3 +17,11 @@ If you want CICD pipeline to auto-run on every commit to the repository,
 - Add the aws EC2 instance private key and add username depending on your EC2 Instance.
 
 Use the created credentials in your script as environment variables.
+
+
+**Note -Container Image Scanning
+
+- I have used Trivy for container image scanning
+-:{aws-account-id} variable in create_ecs_cluster.py file is not present in Jenkins server. I had user actual value which can be substituted by environment variable in Jenkins
+
+- 
