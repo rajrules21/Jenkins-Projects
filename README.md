@@ -16,11 +16,13 @@ Implementing CI/CD pipelines with Jenkins offers several benefits:
 
 ## Featured Projects
 
-### [Project 1: Deploy a Python Flask Todo App Using CI/CD Pipeline in Jenkins](https://github.com/rajrules21/Jenkins-Projects/tree/d292757834953dffe96509893e6475aeae4cd480/Project-1/)
-- **Objective:** Develop a To-Do List Application
+### [Project 1: Deploy a Python Flask Todo App Using CI/CD Pipeline in Jenkins to AWS EC2](https://github.com/rajrules21/Jenkins-Projects/tree/d292757834953dffe96509893e6475aeae4cd480/Project-1/)
+- **Objective:** Develop a To-Do List Application with Python Flask
 - **Features:** Add and Delete Tasks
  
-
+### [Project 2: Deploy a Python Flask Login/Registration App Using CI/CD Pipeline in Jenkins to AWS ECS(Fargate)](https://github.com/rajrules21/Jenkins-Projects/tree/43a19922c730f866f562510e23df481e8a2ec4a6/Project-2)
+- **Objective:** Develop a Login/Registration Application with Python Flask
+- **Features:** User registration and User Login
 
 Stay tuned for more exciting projects as we continue to leverage Jenkins for enhancing our software delivery capabilities!
 
